@@ -119,6 +119,74 @@ export class SearchService {
         );
     }
 
+
+
+  /**
+   * Add Index By Api
+   * Add Index by Api, provide name and type for creating new index
+   * @param name name of index to be created
+   * @param type type of index, should be Simple_Search or Ecommerce
+   * @param API_KEY API_KEY for authentication
+   * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+   * @param reportProgress flag to report request and response progress.
+   */
+  public getAllIndices(
+    API_KEY: string,
+    observe?: 'body',
+    reportProgress?: boolean
+  ): Observable<any>;
+  public getAllIndices(
+    API_KEY: string,
+    observe?: 'response',
+    reportProgress?: boolean
+  ): Observable<HttpResponse<any>>;
+  public getAllIndices(
+    API_KEY: string,
+    observe?: 'events',
+    reportProgress?: boolean
+  ): Observable<HttpEvent<any>>;
+  public getAllIndices(
+    API_KEY: string,
+    observe: any = 'body',
+    reportProgress: boolean = false
+  ): Observable<any> {
+
+    if (API_KEY === null || API_KEY === undefined) {
+      throw new Error(
+        'Required parameter API_KEY was null or undefined when calling addIndex.'
+      );
+    }
+
+    let queryParameters = new HttpParams({
+      encoder: new CustomHttpUrlEncodingCodec(),
+    });
+    if (API_KEY !== undefined && API_KEY !== null) {
+      queryParameters = queryParameters.set('API_KEY', <any>API_KEY);
+    }
+
+    let headers = this.defaultHeaders;
+
+    // to determine the Accept header
+    let httpHeaderAccepts: string[] = [];
+    const httpHeaderAcceptSelected:
+      | string
+      | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+    if (httpHeaderAcceptSelected != undefined) {
+      headers = headers.set('Accept', httpHeaderAcceptSelected);
+    }
+
+    // to determine the Content-Type header
+    const consumes: string[] = [];
+
+    return this.httpClient.post<any>(`${this.basePath}/getAllIndices`, null, {
+      params: queryParameters,
+      withCredentials: this.configuration.withCredentials,
+      headers: headers,
+      observe: observe,
+      reportProgress: reportProgress,
+    });
+  }
+
     /**
      * This will add an object to the given index.
      * It rquire a json object which we want to add.
